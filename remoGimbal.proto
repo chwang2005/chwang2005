@@ -1,0 +1,307 @@
+syntax = "proto3";
+import "remoBasic.proto";
+package remo.proto.gimbal;
+
+enum GimbalCommandEnum {
+    GIMBAL_COMMAND_UNKNOWN       = 0;
+    // {} / {gimbal_status}
+    GIMBAL_GET_STATUS            = 1;       // 获取云台状态
+    // {} / {gimbal_version}
+    GIMBAL_GET_VERSION           = 2;       // 获取云台版本
+    // {roll_speed, pitch_speed, yaw_speed} / {}
+    GIMBAL_SET_SPEED             = 3;       // 设定速度
+    // {roll_degree, pitch_degree, yaw_degree} / {}
+    GIMBAL_SET_ABS_DEGREE        = 4;       // 设定绝对角度
+    // {roll_degree, pitch_degree, yaw_degree} / {}
+    GIMBAL_SET_REL_DEGREE        = 5;       // 设定相对角度
+    // {roll_speed, pitch_speed, yaw_speed, roll_ms, pitch_ms, yaw_ms} / {}
+    GIMBAL_SET_SPEED_TIME        = 6;       // 设定速度时间
+    // {roll_speed, pitch_speed, yaw_speed, roll_degree, pitch_degree, yaw_degree} / {}
+    GIMBAL_SET_SPEED_DEGREE      = 7;       // 设定速度－角度
+    // {roll_degree, pitch_degree, yaw_degree, roll_accel_ms, pitch_accel_ms, yaw_accel_ms, roll_total_ms, pitch_total_ms, yaw_total_ms} / {}
+    GIMBAL_SET_TIME_DEGREE       = 8;       // 设定时间－角度
+    // {gimbal_lock_mode} / {}
+    GIMBAL_LOCK                  = 9;       // 锁定
+    // {gimbal_reset_mode} / {}
+    GIMBAL_RESET                 = 10;       // 复位
+    // {gimbal_calibrate_mode} / {}
+    GIMBAL_CALIBRATE             = 11;       // 校准
+    // {gimbal_reset_factory} / {}
+    GIMBAL_RESET_FACTORY         = 12;       // 恢复出厂设置
+    // {gimbal_stop} / {}
+    GIMBAL_STOP                  = 13;       // 停止
+    // {gimbal_hv_mode} / {}
+    GIMBAL_SET_HVMODE            = 14;       // 设定横竖拍模式
+    // {roll_trim_degree} / {}
+    GIMBAL_TRIM_ROLL_DEGREE      = 15;       // ROLL微调
+    // {roll_speed_sensitivity, pitch_speed_sensitivity, yaw_speed_sensitivity} / {}
+    GIMBAL_SAVE_TRIM_ROLL_ANGLE  = 16;       // 保存微调结果
+    // {gimbal_speed_interp_mode} / {}
+    GIMBAL_EXIT_TRIM_ROLL_ANGLE  = 17;       // 退出ROLL微调
+    // {gimbal_yaw_range_mode} / {}
+    GIMBAL_SET_SPEED_SENSITIVITY = 18;       // 速度敏感性设定
+    // {gimbal_motion_test_mode} / {}
+    GIMBAL_SET_SPEED_INTERP_MODE = 19;       // 速度插值模式
+    // {gimbal_accessory_type} / {}
+    GIMBAL_SET_YAW_RANGE         = 20;       // 设定YAW范围
+    // {gimbal_test_notified} / {}
+    GIMBAL_MOTION_TEST           = 21;       // 运动测试
+    // {} / {gimbal_log}
+    GIMBAL_ACCESSORY_PROBE       = 22;       // 外设接入通知
+    // {gimbal_test_notified} / {}
+    GIMBAL_TEST_NOTIFICATION     = 23;       // 测试准备通知
+    // {} / {gimbal_log}
+    GIMBAL_QUERY_LOG             = 24;       // 获取日志信息
+}
+// 云台状态定义
+message GimbalStatus {
+    float roll_d = 1;                      // ROLL角度
+    float pitch_d = 2;                     // PITCH角度
+    float yaw_d = 3;                       // YAW角度
+    float roll_v = 4;                      // ROLL角速度
+    float pitch_v = 5;                     // PITCH角速度
+    float yaw_v = 6;                       // YAW角速度
+    float roll_ref = 7;                    // ROLL参考角度
+    bool lock = 8;                         // 云台锁定
+    uint32 base_status = 9;                // 底座状态
+    GimbalViewModeEnum hv_mode = 10;       // 横竖拍状态
+    uint32 calibrate_status = 11;          // 校准状态
+    uint32 system_state = 12;              // 系统运行状态
+    float rollbias_horv = 13;              // ROLL水平偏置
+    float rollbias_vert = 14;              // ROLL垂直偏置
+    uint32 factory_check_state = 15;       // 产线检验状态
+    uint32 user_calibrate_percent = 16;    // 用户校准百分比
+    GimbalYawRangeEnum yaw_range_mode = 17;// YAW轴范围模式
+    uint32 errflag = 18;                   // 错误信息
+}
+// 云台版本定义
+message GimbalVersion {
+    uint32 main_version = 1;               // 主板软件版本
+    uint32 roll_version = 2;               // ROLL软件版本
+    uint32 pitch_version = 3;              // PITCH软件版本
+    uint32 yaw_version = 4;                // YAW软件版本
+    uint32 main_seq_id = 5;                 // 主板硬件序列号
+    uint32 roll_seq_id = 6;                 // ROLL硬件序列号
+    uint32 pitch_seq_id = 7;                // PITCH硬件序列号
+    uint32 yaw_seq_id = 8;                  // YAW硬件序列号
+}
+// 云台日志定义
+message GimbalLog {
+    uint32 system_time = 1;                // 系统时间
+    int32 ref_x_angle = 2;                 // 参考x角度
+    int32 ref_y_angle = 3;                 // 参考y角度
+    int32 ref_z_angle = 4;                 // 参考z角度
+    int32 ref_x_velo = 5;                  // 参考x角速度
+    int32 ref_y_velo = 6;                  // 参考y角速度
+    int32 ref_z_velo = 7;                  // 参考z角速度
+    int32 joint_x_angle = 8;               // 关节角x
+    int32 joint_y_angle = 9;               // 关节角y
+    int32 joint_z_angle = 10;              // 关节角z
+    int32 gyro_x_velo = 11;                // 陀螺仪-x角速度
+    int32 gyro_y_velo = 12;                // 陀螺仪-y角速度
+    int32 gyro_z_velo = 13;                // 陀螺仪-z角速度
+    uint32 calibrate_status = 14;          // 校准状态
+    uint32 command_x_status = 15;          // x指令状态
+    uint32 command_y_status = 16;          // y指令状态
+    uint32 command_z_status = 17;          // z指令状态
+    uint32 gimbal_status = 18;             // 云台状态
+    uint32 roll_esc_status = 19;           // ROLL状态
+    uint32 pitch_esc_status = 20;          // PITCH状态
+    uint32 yaw_esc_status = 21;            // YAW状态
+    uint32 log_flags = 22;                 // 日志状态
+}
+// 云台YAW范围定义
+enum GimbalYawRangeEnum {
+    GYR_FULL        = 0;            // 全范围
+    GYR_SECTOR_1    = 1;            // 72°
+    GYR_SECTOR_2    = 2;            // 144°
+    GYR_SECTOR_3    = 3;            // 216°
+    GYR_SECTOR_4    = 4;            // 288°
+}
+// 云台校准模式定义
+enum GimbalCalibrateModeEnum {
+    GCM_ELECTRICAL_ALIGN            = 0;        // 电角度对齐
+    GCM_ACCEL_GYRO_CALIBRATE        = 1;        // 加速度计和陀螺仪校准
+    GCM_GYRO_TRANS_MATRIX_CALIBRATE = 2;        // 陀螺仪转换矩阵校准
+    GCM_USER_CALIBRATE              = 3;        // 用户校准
+    GCM_MAGRP_CALIBRATE             = 4;        // ROLL和PITCH磁编码非线性校准
+    GCM_MAGY_CALIBRATE              = 5;        // YAW磁编码校准非线性校准
+    GCM_IGNORE                      = 6;        // 忽略
+}
+// 云台速度插值方式定义
+enum GimbalSpeedInterpolateModeEnum {
+    GSIM_STEP            = 0;                    // 阶跃
+    GSIM_LINEAR          = 1;                    // 线性插值
+    GSIM_NATURAL         = 2;                    // 自然插值
+}
+// 台运动测试类型定义
+enum GimbalMotionTestEnum {
+    GMT_ROLL_MOTION         = 0;                // ROLL运动测试
+    GMT_PITCH_MOTION        = 1;                // PITCH运动测试
+    GMT_YAW_MOTION          = 2;                // YAW运动测试
+    GMT_YAW_INIT_POSTION    = 3;                // YAW初始位置检测
+    GMT_IGNORE              = 4;                // 忽略
+}
+// 云台配件类型定义
+enum GimbalAccessoryEnum {
+    GAN_IGNORE          = 0;                    // 忽略
+    GAN_CAR             = 1;                    // 小车接入
+}
+// 云台测试类型
+enum GimbalTestNotificationEnum {
+    GTN_IGNORE          = 0;                    // 忽略
+    GTN_AGING_TEST      = 1;                    // 老化测试
+}
+// 云台横竖拍模式
+enum GimbalViewModeEnum {
+    GVM_HORIZONTAL      = 0;                    // 横
+    GVM_VERTICAL        = 1;                    // 竖
+}
+
+
+/**
+* @ 云台错误标志位信息, 默认值为0，出现错误置1
+*   --------------------------------------------------------------------------------------------------
+*    31 - 24    |   0     |    0    |   0     |    0    |   0     |   0     |   0    |    0    |
+*               |         |         |         |         |         |         |        |         |
+*   -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+*    23 - 16    |  0      | RESERVE | EST_INFO|   ACCESSORY_PROBR |          MOTION_TEST       |
+*               |         |         |         |                   |                            |
+*   -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+*    15 - 8     |          YAW_RANGE          |   SPEED_INTERP    | SPEED_  |      TRIM_ROLL   |
+*               |                             |                   |  SENS   |                  |
+*   -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+*     7 - 0     |            CALI             | HVMODE  |  STOP   | RESET   |  LOCK  | RESET_  |
+*               |                             |         |         |         |        | FACTORY |
+*   --------------------------------------------------------------------------------------------------
+**/
+// 云台模式类型
+enum GimbalModeBitEnum{
+	RESET_FACTORY            = 0;                  // 恢复出厂设置   ，1bit
+	LOCK                     = 1;                  // 锁定           ，1bit
+	RESET                    = 2;                  // 复位           ，1bit
+	STOP                     = 3;                  // 停止           ，1bit
+	HVMODE                   = 4;                  // 横竖拍状态     ，1bit
+	CALI_START               = 5;                  // 校准起始       ，3bit
+	CALI_END                 = 7;                  // 校准结束
+	TRIM_ROLL_START          = 8;                  // ROLL轴微调起始 ，2bit
+	TRIM_ROLL_END            = 9;                  // ROLL轴微调结束
+	SPEED_SENSTIVITY         = 10;                 // 速度敏感期     ，1bit
+	SPEED_INTERP_START       = 11;                 // 速度插值起始   ，2bit
+	SPEED_INTERP_END         = 12;                 // 速度插值结束
+	YAW_RANGE_START          = 13;                 // YAW轴范围起始  ，3bit
+	YAW_RANGE_END            = 15;                 // YAW轴范围结束
+	MOTION_TEST_START        = 16;                 // 运动测试起始   ，3bit
+	MOTION_TEST_END          = 18;                 // 运动测试结束
+	ACCESSORY_PROBR_START    = 19;                 // 外设接入起始   ，2bit
+	ACCESSORY_PROBR_END      = 20;                 // 外设接入结束
+	TEST_INFO                = 21;                 // 测试准备通知   ，1bit
+	MODE_UNDEFINE            = 22;                 // 保留
+}
+
+
+/**
+* @ 云台错误标志位信息, 默认值为0，出现错误置1
+*   ---------------------------------------------------------------------------------------
+*    31 - 24    |   0    |   0    |   0    |   0    |   0    |   0    |   0    |  RUN2  |
+*    23 - 16    |  RUN1  |  RUN0  |  ESC2  |  ESC1  |  ESC0  |  MAG2  |  MAG1  |  MAG0  |
+*    15 - 8     |  IMU2  |  IMU1  |  IMU0  |  AHRS1 |  AHRS0 |  GSC10 |  GSC9  |  GSC8  |
+*     7 - 0     |  GSC7  |  GSC6  |  GSC5  |  GSC4  |  GSC3  |  GSC2  |  GSC1  |  GSC0  |
+*   ---------------------------------------------------------------------------------------
+*
+* @ 云台错误标志位定义
+*   云台自检错误信息定义
+*  ------------------------------------------------------------------------------------------------------------------------
+*   GSC10 |  GSC9  | GSC8    |   GSC7   |     GSC6  |   GSC5    |     GSC4  |     GSC3  |     GSC2  |  GSC1   |  GSC0    | 
+*    保留 |  保留  | 保留    | yaw轴磁  | pitch轴磁 | roll轴磁  |  云台三轴 | 电调板自检| 云台板自检| 电调通讯| 云台系统 |
+*         |        |         | 编码线性 |  编码线性 | 编码线性  |  电机未全 |   异常或  | 	异常或  |  失败   | 初始化   |
+*         |        |         |  校准空  |   校准空  |  校准空   |   部启动  |   未自检  |   未自检  |         |   失败   |
+*
+*   云台姿态异常信息定义                         云台IMU模块异常信息定义
+*   ------------------------------------------------------------------------------------------------------
+*     AHRS1   |    AHRS0  |         |           |  IMU2    |  IMU1    |    IMU0  |         |          |
+*     加速度  |  姿态发散 |         |           | IMU加热  | 加速度计 | 陀螺仪漂 |         |          |
+*     长时间  |           |         |           |  异常    |   异常   |  移严重  |         |          |
+*   未修正姿态|           |         |           |          |          |
+*   
+*   云台磁编码模块异常信息定义                    云台电调模块异常信息定义
+*   -------------------------------------------------------------------------------------------------------
+*      MAG2   |  MAG1    |    MAG0  |           |   ESC2   |  ESC1    |    ESC0  |         |          |
+*     yaw磁编 | pitch磁  | roll磁编 |           |  yaw电调 | pitch电  | roll电调 |         |          |
+*     码异常  | 编码异常 |  码异常  |           |   异常   | 调异常   |    异常  |         |          |
+*             |          |          |           |          |          |          |         |          |
+*
+*   云台电调模块异常信息定义
+*   -------------------------------------------------------------------------------------------------------
+*      RUN2   |  RUN1    |    RUN0  |         |          |          |
+*    pitch极限| 运行受阻 |   万向节 |         |          |          |
+*    云台宕机 | 云台宕机 |    状态  |         |          | 	        |
+*             |          |          |         |          |          |
+**/
+// 云台异常标志
+enum GimbalErrorBitEnum{
+	GSC0            = 0;                  // 云台系统初始化失败
+	GSC1            = 1;                  // 电调通讯失败
+	GSC2            = 2;                  // 云台板自检异常或未自检
+	GSC3            = 3;                  // 电调板自检异常或未自检
+	GSC4            = 4;                  // 云台三轴电机未全部启动
+	GSC5            = 5;                  // roll轴磁编码线性校准空
+	GSC6            = 6;                  // pitch轴磁编码线性校准空
+	GSC7            = 7;                  // yaw轴磁编码线性校准空
+	GSC8            = 8;                  // 保留
+	GSC9            = 9;                  // 保留
+	GSC10           = 10;                 // 保留
+	AHRS0           = 11;                  // 姿态发散
+	AHRS1           = 12;                  // 加速度长时间未修正姿态
+	IMU0            = 13;                 // 陀螺仪漂移严重
+	IMU1            = 14;                 // 加速度计异常
+	IMU2            = 15;                 // IMU加热异常
+	MAG0            = 16;                 // roll磁编码异常
+	MAG1            = 17;                 // pitch磁编码异常
+	MAG2            = 18;                 // yaw磁编码异常
+	ESC0            = 19;                 // roll电调异常
+	ESC1            = 20;                 // pitch电调异常
+	ESC2            = 21;                 // yaw电调异常
+	RUN0            = 22;                 // 万向节状态
+	RUN1            = 23;                 // 运行受阻云台宕机
+	RUN2            = 24;                 // pitch极限云台宕机
+	BIT_UNDEFINE    = 25;                 // 保留
+}
+
+
+message GimbalCommand {
+    // 参数定义从此开始
+    GimbalCommandEnum cmd = 1;                 // 命令类型
+    remo.proto.basic.ErrorMessage error = 2;                    // 错误信息, 仅限于应答
+    GimbalStatus gimbal_status = 3;            // 云台状态
+    GimbalVersion gimbal_version = 4;          // 云台版本
+    GimbalLog gimbal_log = 5;                  // 云台日志
+    // control args
+    float roll_speed = 6;                      // ROLL速度设置
+    float pitch_speed = 7;                     // PITCH速度设置
+    float yaw_speed = 8;                       // YAW速度设置
+    float roll_degree = 9;                     // ROLL角度设置
+    float pitch_degree = 10;                   // PITCH角度设置
+    float yaw_degree = 11;                     // YAW角度设置
+    float roll_ms = 12;                        // ROLL时间设置
+    float pitch_ms = 13;                       // PITCH时间设置
+    float yaw_ms = 14;                         // YAW时间设置
+    float roll_accel_ms = 15;                  // ROLL加减速时间设置
+    float pitch_accel_ms = 16;                 // PITCH加减速设置
+    float yaw_accel_ms = 17;                   // YAW加减速设置
+    // trim roll angles
+    float roll_trim_degree = 18;               // ROLL微调角度
+    // set mode: 所有模式设置全部使用该字段
+    uint32 mode = 19;                          // 模式设置
+}
+
+#define ABCD 1
+
+
+
+
+
+
+
+
+
